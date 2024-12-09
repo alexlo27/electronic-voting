@@ -1,0 +1,36 @@
+
+services:
+  voto-electronico:
+    image: alexlo27/voto-electronico:v1
+    container_name: voto-electronico-container
+    #build:
+      #context: .
+      #dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/uploads
+    networks:
+      - voto-network
+
+    depends_on:
+      - postgres
+
+  postgres:
+    image: alexlo27/voto-electronico-db:v1
+    container_name: postgres_latest
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+      POSTGRES_DB: voto-electronico
+    ports:
+      - "5433:5432"
+    networks:
+      - voto-network
+    volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql  # Monta el archivo SQL aquí
+      - postgres-volume:/var/lib/postgres
+networks:
+  voto-network:
+volumes:
+  postgres-volume:
